@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang = "zh-CN">
+<head>
+    <meta charset = "UTF-8">
+    <title>万物互联 · 极致体验</title>
+    <style>
+        @font-face{
+            font-family: "书法";
+            src:url("fonts/书法.ttf")format("truetype");
+        }
+
+        *{
+            margin:  0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body{
+            font-family: "Microsoft YaHei","PingFang SC",Arial, sans-serif;
+            background-color: #ffffff;
+            color: #333333;
+            display: flex;
+            justify-content: center;
+            align-content: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container{
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        .main-title{
+            text-align: center;
+            font-size: 42px;
+            letter-spacing: 4px;
+            margin-bottom: 60px;
+            color: #1a1a1a;
+            font-family: "书法","KaiTi","STKaiti",serif;
+            font-weight: 700;
+        }
+
+        .content-row{
+            display: flex;
+            justify-content: space-between;
+            gap: 50px;
+            margin-bottom: 80px;
+        }
+
+        .column{
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .icon-wrapper{
+            width: 90px;
+            height: 90px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-wrapper img{
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .column p{
+            font-size: 15px;
+            line-height: 1.8;
+            color: #444444;
+            text-align: left;
+            max-width: 480px;
+        }
+
+        .column p label{
+            font-weight: 700;
+            font-style: italic;
+            color: #1a1a1a;
+        }
+
+        .platform-section{
+            text-align: center;
+        }
+
+        .platform-title{
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 50px;
+            letter-spacing: 2px;
+            font-family:"书法","KaiTi","STKaiti",serif;
+        }
+
+        .platform-grid{
+            display: grid;
+            grid-template-columns:repeat(4,1fr);
+            gap: 30px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .platform-item{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .platform-item img{
+            width: 52px;
+            height: 52px;
+            object-fit: contain;
+        }
+
+        .platform-item span{
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="main-title">万物互联·极致体验</h1>
+        <div class="content-row">
+            <div class="column">
+                <div class="icon-wrapper">
+                    <img src="images/1.png" alt="HTML5">
+                </div>
+                <p>
+                    <span class="label">【HTML5】</span>HTML5不仅仅是HTML规范的当前最新版本，HTML5<br>进化的重大意义还在于HTML5从技术层面带来了八个类别的革<br>新。HTML5规范以“用户至上”为宗旨，也就是说在遇到冲突<br>时，规范的优先顺序为：用户&gt;页面作者&gt;实现者（浏览器）&gt;规范开<br>发者（W3C/WHATWG）&gt;纯理论。除此之外，HTML5还引入了<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一种新的安全模型来保证HTML5足够安全。
+                </p>
+            </div>
+
+            <div class="column">
+                <div class="icon-wrapper">
+                    <img src="images/2.png" alt="CSS3">
+                </div>
+                <p>
+                    <span class="label">【HTML5】</span>HTML5不仅仅是HTML规范的当前最新版本，HTML5<br>进化的重大意义还在于HTML5从技术层面带来了八个类别的革<br>新。HTML5规范以“用户至上”为宗旨，也就是说在遇到冲突<br>时，规范的优先顺序为：用户&gt;页面作者&gt;实现者（浏览器）&gt;规范开<br>发者（W3C/WHATWG）&gt;纯理论。除此之外，HTML5还引入了<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一种新的安全模型来保证HTML5足够安全。
+                </p>
+            </div>
+        </div>
+
+        <div class="platform-section">
+            <h2 class="platform-title">平台支持</h2>
+            <div class="platform-grid">
+                <div class="platform-item">
+                    <img src="images/3.png" alt="苹果">
+                    <span>原生移动App开发</span>
+                </div>
+
+                <div class="platform-item">
+                    <img src="images/4.png" alt="微信">
+                    <span>微信公众平台开发</span>
+                </div>
+
+                <div class="platform-item">
+                    <img src="images/5.png" alt="网站开发">
+                    <span>网站开发</span>
+                </div>
+
+                <div class="platform-item">
+                    <img src="images/6.png" alt="桌面应用开发">
+                    <span>桌面应用开发</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
+    
+    
+
