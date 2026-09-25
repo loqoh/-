@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI助教答疑平台 - 个性化在线学习问答系统">
+    <meta name="keywords" content="AI助教,答疑,在线学习,教育平台">
+    <title>AI助教答疑平台</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary-color: #4f6ef7;
+            --primary-dark: #3a54c4;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --bg-gradient-start: #e8f0ff;
+            --bg-gradient-end: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --border-color: #e0e0e0;
+            --shadow: 0 8px 30px rgba(79, 110, 247, 0.12);
+            --shadow-hover: 0 12px 40px rgba(79, 110, 247, 0.2);
+        }
+
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #8b5cf6 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        nav { display: flex; gap: 10px; align-items: center; }
+
+        .nav-btn {
+            padding: 8px 24px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: transparent;
+            color: var(--text-secondary);
+        }
+
+        .nav-btn.active { background: var(--primary-color); color: white; }
+        .nav-btn:not(.active):hover { background: var(--bg-gradient-start); color: var(--primary-color); }
+
+        .user-info {
+            display: none;
+            align-items: center;
+            gap: 12px;
+        }
+        .user-info.show { display: flex; }
+        .user-avatar {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 600; font-size: 14px;
+        }
+        .user-name { font-size: 14px; font-weight: 500; }
+        .logout-btn {
+            padding: 6px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+        .logout-btn:hover { border-color: var(--danger-color); color: var(--danger-color); }
+
+        main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 70px);
+            padding: 30px 20px;
+        }
+
+        .form-container {
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 460px;
+            overflow: hidden;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #8b5cf6 100%);
+            padding: 40px 35px 35px;
+            color: white;
+            text-align: center;
+        }
+        .form-header h1 { font-size: 24px; margin-bottom: 8px; font-weight: 600; }
+        .form-header p { font-size: 14px; opacity: 0.9; }
+        .form-body { padding: 35px; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .form-group label .required { color: var(--danger-color); margin-left: 2px; }
+
+        .input-wrapper { position: relative; }
+        .input-wrapper input,
+        .input-wrapper select,
+        .input-wrapper textarea {
+            width: 100%;
+            padding: 12px 15px 12px 42px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            background: #fafbfc;
+        }
+        .input-wrapper textarea {
+            padding-left: 42px;
+            resize: vertical;
+            min-height: 100px;
+        }
+        .input-wrapper input:focus,
+        .input-wrapper select:focus,
+        .input-wrapper textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(79, 110, 247, 0.1);
+        }
+        .input-wrapper input:valid:not(:placeholder-shown) { border-color: var(--success-color); }
+        .input-wrapper input:invalid:not(:placeholder-shown) { border-color: var(--danger-color); }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--secondary-color);
+            font-size: 16px;
+            pointer-events: none;
+        }
+        .textarea-icon {
+            top: 18px;
+            transform: none;
+        }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .checkbox-group input[type="checkbox"],
+        .checkbox-group input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-color);
+            cursor: pointer;
+        }
+        .checkbox-group label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+        .checkbox-group label a { color: var(--primary-color); text-decoration: none; }
+        .checkbox-group label a:hover { text-decoration: underline; }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(79, 110, 247, 0.3);
+        }
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(79, 110, 247, 0.4); }
+        .submit-btn:active { transform: translateY(0); }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        .form-footer a { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .form-footer a:hover { text-decoration: underline; }
+        .form-footer .switch-text { cursor: pointer; }
+
+        .form-progress { margin-bottom: 25px; }
+        .form-progress label {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+        }
+        progress {
+            width: 100%;
+            height: 6px;
+            border: none;
+            border-radius: 3px;
+            background: #e9ecef;
+            overflow: hidden;
+        }
+        progress::-webkit-progress-bar { background: #e9ecef; }
+        progress::-webkit-progress-value {
+            background: linear-gradient(90deg, var(--primary-color), #8b5cf6);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .password-strength { margin-top: 8px; }
+        .password-strength meter {
+            width: 100%;
+            height: 6px;
+            border: none;
+            border-radius: 3px;
+            background: transparent;
+        }
+        meter::-webkit-meter-bar { background: #e9ecef; border-radius: 3px; }
+        meter::-webkit-meter-optimum-value { background: var(--success-color); border-radius: 3px; }
+        meter::-webkit-meter-suboptimum-value { background: var(--warning-color); border-radius: 3px; }
+        meter::-webkit-meter-even-less-good-value { background: var(--danger-color); border-radius: 3px; }
+        .password-hint { font-size: 12px; margin-top: 4px; }
+
+        .alert {
+            padding: 12px 15px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .alert.show { display: block; animation: shake 0.4s ease; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .alert-error { background: #fff5f5; color: var(--danger-color); border: 1px solid #fecaca; }
+        .alert-success { background: #f0fdf4; color: var(--success-color); border: 1px solid #bbf7d0; }
+        .alert-info { background: #eff6ff; color: var(--primary-color); border: 1px solid #bfdbfe; }
+
+        .section-hidden { display: none; }
+        .section-hidden.active { display: block; }
+
+        .remember-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .remember-row a { font-size: 13px; color: var(--primary-color); text-decoration: none; }
+        .remember-row a:hover { text-decoration: underline; }
+
+        select.input-full {
+            width: 100%;
+            padding: 12px 15px 12px 42px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fafbfc;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+        select.input-full:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: white;
+        }
+        .input-wrapper select { padding-left: 42px; }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* ============ 答疑主界面样式 ============ */
+        .dashboard-container {
+            display: none;
+            width: 100%;
+            max-width: 1200px;
+            gap: 24px;
+            animation: fadeInUp 0.5s ease;
+        }
+        .dashboard-container.active { display: flex; }
+
+        .sidebar {
+            width: 280px;
+            flex-shrink: 0;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            padding: 24px;
+            height: calc(100vh - 130px);
+            overflow-y: auto;
+        }
+        .sidebar h3 {
+            font-size: 15px;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .history-list { display: flex; flex-direction: column; gap: 8px; }
+        .history-item {
+            padding: 12px;
+            background: #f8f9fb;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+        .history-item:hover { background: var(--bg-gradient-start); border-left-color: var(--primary-color); }
+        .history-item .q-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .history-item .q-time { font-size: 11px; color: var(--text-secondary); }
+
+        .sidebar-stats {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 13px;
+        }
+        .stat-item .stat-label { color: var(--text-secondary); }
+        .stat-item .stat-value { font-weight: 600; color: var(--primary-color); }
+
+        .main-chat {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            height: calc(100vh - 130px);
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .ai-avatar {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 22px;
+        }
+        .chat-header-info h2 { font-size: 17px; font-weight: 600; }
+        .chat-header-info p { font-size: 12px; color: var(--success-color); }
+
+        .chat-messages {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .message {
+            display: flex;
+            gap: 12px;
+            animation: msgFadeIn 0.3s ease;
+        }
+        @keyframes msgFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .message.user { flex-direction: row-reverse; }
+        .message .msg-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        .message.ai .msg-avatar {
+            background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
+            color: white;
+        }
+        .message.user .msg-avatar {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+        .message .msg-content {
+            max-width: 70%;
+            padding: 14px 18px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .message.ai .msg-content {
+            background: #f0f4ff;
+            color: var(--text-primary);
+            border-bottom-left-radius: 4px;
+        }
+        .message.user .msg-content {
+            background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 4px 0;
+        }
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: var(--secondary-color);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-8px); opacity: 1; }
+        }
+
+        .chat-input-area {
+            padding: 16px 24px 20px;
+            border-top: 1px solid var(--border-color);
+            background: #fafbfc;
+        }
+        .chat-form {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+        .chat-form .input-wrapper { flex: 1; }
+        .chat-form textarea {
+            padding: 14px 16px 14px 42px;
+            min-height: 60px;
+            max-height: 180px;
+        }
+        .send-btn {
+            padding: 14px 24px;
+            background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            height: 50px;
+        }
+        .send-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(79, 110, 247, 0.4); }
+        .send-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .quick-tags {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .quick-tag {
+            padding: 6px 14px;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .quick-tag:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            background: var(--bg-gradient-start);
+        }
+
+        .welcome-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+        .welcome-empty .welcome-icon {
+            font-size: 60px;
+            margin-bottom: 16px;
+        }
+        .welcome-empty h3 {
+            font-size: 18px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        .welcome-empty p { font-size: 13px; }
+
+        @media (max-width: 768px) {
+            .dashboard-container { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; max-height: 300px; }
+            .main-chat { height: calc(100vh - 200px); }
+        }
+
+        @media (max-width: 500px) {
+            header { padding: 12px 20px; }
+            .form-row { grid-template-columns: 1fr; }
+            .form-body { padding: 25px; }
+            .form-header { padding: 30px 25px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <div class="logo-icon">🎓</div>
+            <span>AI助教答疑平台</span>
+        </div>
+        <nav>
+            <button type="button" class="nav-btn active" id="nav-login" data-target="login-section">登录</button>
+            <button type="button" class="nav-btn" id="nav-register" data-target="register-section">注册</button>
+            <div class="user-info" id="user-info">
+                <div class="user-avatar" id="user-avatar">U</div>
+                <span class="user-name" id="user-name">用户</span>
+                <button class="logout-btn" id="logout-btn">退出</button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- 登录表单 -->
+        <section class="form-container section-hidden active" id="login-section" aria-label="登录表单">
+            <div class="form-header">
+                <h1>欢迎回来 👋</h1>
+                <p>登录AI助教，开启智能学习之旅</p>
+            </div>
+            <div class="form-body">
+                <div class="alert" id="login-alert" role="alert"></div>
+
+                <form id="login-form" novalidate autocomplete="on">
+                    <div class="form-group">
+                        <label for="login-username">邮箱 / 学号<span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">👤</span>
+                            <input type="text" id="login-username" name="username"
+                                placeholder="请输入邮箱或学号"
+                                required
+                                autocomplete="username"
+                                autofocus>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="login-password">密码<span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🔒</span>
+                            <input type="password" id="login-password" name="password"
+                                placeholder="请输入密码"
+                                required
+                                minlength="6"
+                                maxlength="30"
+                                autocomplete="current-password">
+                        </div>
+                    </div>
+
+                    <div class="remember-row">
+                        <div class="checkbox-group" style="margin-bottom: 0;">
+                            <input type="checkbox" id="remember-me" name="remember" value="true">
+                            <label for="remember-me">记住我</label>
+                        </div>
+                        <a href="#" onclick="showAlert('请联系管理员重置密码', 'error'); return false;">忘记密码?</a>
+                    </div>
+
+                    <button type="submit" class="submit-btn">登 录</button>
+
+                    <div class="form-footer">
+                        还没有账号? <a href="#" class="switch-text" data-target="register-section">立即注册</a>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- 注册表单 -->
+        <section class="form-container section-hidden" id="register-section" aria-label="注册表单">
+            <div class="form-header">
+                <h1>创建新账号 ✨</h1>
+                <p>加入AI助教，享受个性化学习体验</p>
+            </div>
+            <div class="form-body">
+                <div class="alert" id="register-alert" role="alert"></div>
+
+                <form id="register-form" novalidate autocomplete="on">
+                    <div class="form-progress">
+                        <label for="form-progress">填写进度: <span id="progress-text">0%</span></label>
+                        <progress id="form-progress" value="0" max="100"></progress>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reg-username">用户名<span class="required">*</span></label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">👤</span>
+                                <input type="text" id="reg-username" name="username"
+                                    placeholder="4-20个字符"
+                                    required
+                                    minlength="4"
+                                    maxlength="20"
+                                    pattern="^[a-zA-Z0-9_\u4e00-\u9fa5]+$"
+                                    title="用户名只能包含字母、数字、下划线或中文"
+                                    autocomplete="username">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-gender">性别<span class="required">*</span></label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">⚧</span>
+                                <select id="reg-gender" name="gender" required class="input-full">
+                                    <option value="" disabled selected>请选择</option>
+                                    <option value="male">男</option>
+                                    <option value="female">女</option>
+                                    <option value="other">其他</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reg-email">电子邮箱<span class="required">*</span></label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">📧</span>
+                                <input type="email" id="reg-email" name="email"
+                                    placeholder="example@email.com"
+                                    required
+                                    autocomplete="email"
+                                    multiple>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-phone">手机号码</label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">📱</span>
+                                <input type="tel" id="reg-phone" name="phone"
+                                    placeholder="请输入手机号"
+                                    pattern="^1[3-9]\d{9}$"
+                                    title="请输入有效的11位手机号码"
+                                    autocomplete="tel">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reg-birthday">出生日期</label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">🎂</span>
+                                <input type="date" id="reg-birthday" name="birthday"
+                                    min="1990-01-01"
+                                    max="2025-12-31"
+                                    autocomplete="bday">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-major">所学专业<span class="required">*</span></label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">📚</span>
+                                <input type="text" id="reg-major" name="major"
+                                    placeholder="选择或输入专业"
+                                    required
+                                    list="major-list"
+                                    autocomplete="off">
+                                <datalist id="major-list">
+                                    <option value="计算机科学与技术"></option>
+                                    <option value="软件工程"></option>
+                                    <option value="人工智能"></option>
+                                    <option value="数据科学"></option>
+                                    <option value="电子信息"></option>
+                                    <option value="数学与应用数学"></option>
+                                    <option value="物理学"></option>
+                                    <option value="经济学"></option>
+                                    <option value="工商管理"></option>
+                                    <option value="英语"></option>
+                                </datalist>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reg-school">所在学校</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🏫</span>
+                            <input type="search" id="reg-school" name="school"
+                                placeholder="请输入学校名称"
+                                list="school-list">
+                            <datalist id="school-list">
+                                <option value="清华大学"></option>
+                                <option value="北京大学"></option>
+                                <option value="复旦大学"></option>
+                                <option value="上海交通大学"></option>
+                                <option value="浙江大学"></option>
+                                <option value="南京大学"></option>
+                                <option value="武汉大学"></option>
+                                <option value="中山大学"></option>
+                            </datalist>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reg-password">密码<span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🔐</span>
+                            <input type="password" id="reg-password" name="password"
+                                placeholder="至少8位，含大小写字母和数字"
+                                required
+                                minlength="8"
+                                maxlength="30"
+                                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$"
+                                title="密码必须包含至少一个大写字母、一个小写字母和一个数字"
+                                autocomplete="new-password">
+                        </div>
+                        <div class="password-strength">
+                            <meter id="password-strength" value="0" min="0" max="10" low="4" high="7" optimum="8"></meter>
+                            <div class="password-hint" id="password-hint">密码强度: 未输入</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reg-confirm">确认密码<span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🔐</span>
+                            <input type="password" id="reg-confirm" name="confirm"
+                                placeholder="请再次输入密码"
+                                required
+                                minlength="8"
+                                maxlength="30"
+                                autocomplete="new-password">
+                        </div>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="agree-terms" name="agree" value="true" required>
+                        <label for="agree-terms">
+                            我已阅读并同意 <a href="#" onclick="return false;">《用户协议》</a> 和 <a href="#" onclick="return false;">《隐私政策》</a>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="submit-btn">注 册</button>
+
+                    <div class="form-footer">
+                        已有账号? <a href="#" class="switch-text" data-target="login-section">立即登录</a>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- 答疑主界面 -->
+        <section class="dashboard-container" id="dashboard" aria-label="答疑主界面">
+            <aside class="sidebar">
+                <h3>🕐 历史提问</h3>
+                <div class="history-list" id="history-list">
+                    <div class="history-item" data-q="什么是HTML5？">
+                        <div class="q-title">什么是HTML5？</div>
+                        <div class="q-time">2小时前</div>
+                    </div>
+                    <div class="history-item" data-q="CSS Grid布局怎么用？">
+                        <div class="q-title">CSS Grid布局怎么用？</div>
+                        <div class="q-time">昨天</div>
+                    </div>
+                    <div class="history-item" data-q="JavaScript闭包是什么？">
+                        <div class="q-title">JavaScript闭包是什么？</div>
+                        <div class="q-time">3天前</div>
+                    </div>
+                </div>
+
+                <div class="sidebar-stats">
+                    <h3>📊 学习统计</h3>
+                    <div class="stat-item">
+                        <span class="stat-label">累计提问</span>
+                        <span class="stat-value" id="stat-total">3</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">本周提问</span>
+                        <span class="stat-value" id="stat-week">3</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">提问解决率</span>
+                        <span class="stat-value">98%</span>
+                    </div>
+                </div>
+            </aside>
+
+            <div class="main-chat">
+                <div class="chat-header">
+                    <div class="ai-avatar">🤖</div>
+                    <div class="chat-header-info">
+                        <h2>AI助教小助手</h2>
+                        <p>● 在线 | 随时为您解答学习问题</p>
+                    </div>
+                </div>
+
+                <div class="chat-messages" id="chat-messages">
+                    <div class="welcome-empty" id="welcome-empty">
+                        <div class="welcome-icon">💡</div>
+                        <h3>有什么可以帮你的？</h3>
+                        <p>选择下方快捷提问，或直接输入你的问题</p>
+                    </div>
+                </div>
+
+                <div class="chat-input-area">
+                    <form class="chat-form" id="chat-form">
+                        <div class="input-wrapper">
+                            <span class="input-icon textarea-icon">💬</span>
+                            <textarea id="question-input" name="question"
+                                placeholder="请输入你的问题，AI助教将为你解答..."
+                                required
+                                maxlength="500"
+                                rows="1"></textarea>
+                        </div>
+                        <button type="submit" class="send-btn" id="send-btn">发送</button>
+                    </form>
+                    <div class="quick-tags">
+                        <span class="quick-tag" data-q="什么是HTML5表单增强？">HTML5表单增强</span>
+                        <span class="quick-tag" data-q="CSS Grid和Flexbox有什么区别？">CSS Grid vs Flexbox</span>
+                        <span class="quick-tag" data-q="如何学习JavaScript？">JS学习路线</span>
+                        <span class="quick-tag" data-q="解释一下AJAX的工作原理">AJAX原理</span>
+                        <span class="quick-tag" data-q="什么是DOM操作？">DOM操作</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 AI助教答疑平台 | Powered by HTML5</p>
+    </footer>
+
+    <script>
+        (function () {
+            var navLogin = document.getElementById('nav-login');
+            var navRegister = document.getElementById('nav-register');
+            var loginSection = document.getElementById('login-section');
+            var registerSection = document.getElementById('register-section');
+            var dashboard = document.getElementById('dashboard');
+            var userInfo = document.getElementById('user-info');
+            var userAvatar = document.getElementById('user-avatar');
+            var userName = document.getElementById('user-name');
+            var logoutBtn = document.getElementById('logout-btn');
+
+            function isLoggedIn() {
+                return sessionStorage.getItem('ta_logged_user');
+            }
+
+            function showAuthSection(targetId) {
+                loginSection.classList.remove('active');
+                registerSection.classList.remove('active');
+                dashboard.classList.remove('active');
+                navLogin.style.display = '';
+                navRegister.style.display = '';
+                navLogin.classList.add('active');
+                navRegister.classList.remove('active');
+                userInfo.classList.remove('show');
+
+                var target = document.getElementById(targetId);
+                if (target) {
+                    target.classList.add('active');
+                }
+                if (targetId === 'register-section') {
+                    navRegister.classList.add('active');
+                    navLogin.classList.remove('active');
+                }
+                main.style.alignItems = 'center';
+                main.style.display = 'flex';
+            }
+
+            function showDashboard() {
+                loginSection.classList.remove('active');
+                registerSection.classList.remove('active');
+                dashboard.classList.add('active');
+                navLogin.style.display = 'none';
+                navRegister.style.display = 'none';
+                userInfo.classList.add('show');
+                main.style.alignItems = 'flex-start';
+                main.style.display = 'flex';
+
+                var user = sessionStorage.getItem('ta_logged_user');
+                if (user) {
+                    userName.textContent = user;
+                    userAvatar.textContent = user.charAt(0).toUpperCase();
+                }
+            }
+
+            navLogin.addEventListener('click', function () {
+                if (isLoggedIn()) { showDashboard(); }
+                else { showAuthSection('login-section'); }
+            });
+            navRegister.addEventListener('click', function () { showAuthSection('register-section'); });
+            logoutBtn.addEventListener('click', function () {
+                sessionStorage.removeItem('ta_logged_user');
+                showAuthSection('login-section');
+            });
+
+            document.querySelectorAll('.switch-text').forEach(function (link) {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    showAuthSection(this.getAttribute('data-target'));
+                });
+            });
+
+            function showAlert(message, type, sectionId) {
+                if (!sectionId) sectionId = 'login-section';
+                var alertId = sectionId === 'register-section' ? 'register-alert' : 'login-alert';
+                var alertBox = document.getElementById(alertId);
+                alertBox.textContent = message;
+                alertBox.className = 'alert show alert-' + type;
+                setTimeout(function () { alertBox.className = 'alert'; }, 4000);
+            }
+
+            var main = document.querySelector('main');
+
+            function validateLogin(form) {
+                var username = form.username.value.trim();
+                var password = form.password.value;
+                if (!username) { showAlert('请输入邮箱或学号', 'error'); return false; }
+                if (!password) { showAlert('请输入密码', 'error'); return false; }
+                if (password.length < 6) { showAlert('密码长度至少为6位', 'error'); return false; }
+                return true;
+            }
+
+            function validateRegister(form) {
+                var username = form.username.value.trim();
+                var email = form.email.value.trim();
+                var phone = form.phone.value.trim();
+                var password = form.password.value;
+                var confirm = form.confirm.value;
+                var major = form.major.value.trim();
+                var gender = form.gender.value;
+                var agree = form.agree.checked;
+
+                if (!username || username.length < 4) { showAlert('用户名至少4个字符', 'error', 'register-section'); return false; }
+                if (!gender) { showAlert('请选择性别', 'error', 'register-section'); return false; }
+                if (!email) { showAlert('请输入电子邮箱', 'error', 'register-section'); return false; }
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showAlert('请输入有效的电子邮箱格式', 'error', 'register-section'); return false; }
+                if (phone && !/^1[3-9]\d{9}$/.test(phone)) { showAlert('请输入有效的手机号码', 'error', 'register-section'); return false; }
+                if (!major) { showAlert('请选择或输入所学专业', 'error', 'register-section'); return false; }
+                if (!password || password.length < 8) { showAlert('密码至少8位', 'error', 'register-section'); return false; }
+                if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) { showAlert('密码必须包含大写字母、小写字母和数字', 'error', 'register-section'); return false; }
+                if (password !== confirm) { showAlert('两次输入的密码不一致', 'error', 'register-section'); return false; }
+                if (!agree) { showAlert('请先阅读并同意用户协议和隐私政策', 'error', 'register-section'); return false; }
+                return true;
+            }
+
+            var loginForm = document.getElementById('login-form');
+            loginForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                if (validateLogin(loginForm)) {
+                    var username = loginForm.username.value.trim();
+                    var remember = loginForm.remember.checked;
+                    if (remember) {
+                        localStorage.setItem('ta_username', username);
+                        localStorage.setItem('ta_remember', 'true');
+                    } else {
+                        localStorage.removeItem('ta_username');
+                        localStorage.removeItem('ta_remember');
+                    }
+                    sessionStorage.setItem('ta_logged_user', username);
+                    showDashboard();
+                    initWelcomeChat();
+                }
+            });
+
+            var remember = localStorage.getItem('ta_remember');
+            if (remember === 'true') {
+                var savedUser = localStorage.getItem('ta_username');
+                if (savedUser) {
+                    document.getElementById('login-username').value = savedUser;
+                    document.getElementById('remember-me').checked = true;
+                }
+            }
+
+            var registerForm = document.getElementById('register-form');
+            registerForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                if (validateRegister(registerForm)) {
+                    var userData = {
+                        username: registerForm.username.value.trim(),
+                        email: registerForm.email.value.trim(),
+                        phone: registerForm.phone.value.trim(),
+                        gender: registerForm.gender.value,
+                        birthday: registerForm.birthday.value,
+                        major: registerForm.major.value.trim(),
+                        school: registerForm.school.value.trim(),
+                        createdAt: new Date().toISOString()
+                    };
+                    var users = JSON.parse(localStorage.getItem('ta_users') || '[]');
+                    users.push(userData);
+                    localStorage.setItem('ta_users', JSON.stringify(users));
+                    showAlert('注册成功! 请使用新账号登录', 'success', 'register-section');
+                    setTimeout(function () {
+                        registerForm.reset();
+                        document.getElementById('form-progress').value = 0;
+                        document.getElementById('progress-text').textContent = '0%';
+                        showAuthSection('login-section');
+                    }, 2000);
+                }
+            });
+
+            function calcPasswordStrength(pwd) {
+                if (!pwd) return { score: 0, text: '未输入' };
+                var score = 0;
+                if (pwd.length >= 8) score++;
+                if (pwd.length >= 12) score++;
+                if (/[a-z]/.test(pwd)) score++;
+                if (/[A-Z]/.test(pwd)) score++;
+                if (/\d/.test(pwd)) score++;
+                if (/[^a-zA-Z0-9]/.test(pwd)) score++;
+                var text = score <= 2 ? '弱' : score <= 4 ? '中' : '强';
+                return { score: score, text: text };
+            }
+
+            var pwdInput = document.getElementById('reg-password');
+            var pwdMeter = document.getElementById('password-strength');
+            var pwdHint = document.getElementById('password-hint');
+            pwdInput.addEventListener('input', function () {
+                var result = calcPasswordStrength(this.value);
+                pwdMeter.value = result.score;
+                pwdHint.textContent = '密码强度: ' + result.text;
+            });
+
+            var progress = document.getElementById('form-progress');
+            var progressText = document.getElementById('progress-text');
+            var regInputs = registerForm.querySelectorAll('input[required], select[required]');
+            function updateProgress() {
+                var filled = 0;
+                regInputs.forEach(function (input) {
+                    if (input.type === 'checkbox') { if (input.checked) filled++; }
+                    else { if (input.value.trim()) filled++; }
+                });
+                var pct = Math.round((filled / regInputs.length) * 100);
+                progress.value = pct;
+                progressText.textContent = pct + '%';
+            }
+            regInputs.forEach(function (input) {
+                input.addEventListener('input', updateProgress);
+                input.addEventListener('change', updateProgress);
+            });
+
+            var confirmInput = document.getElementById('reg-confirm');
+            confirmInput.addEventListener('input', function () {
+                if (this.value && this.value !== pwdInput.value) {
+                    this.setCustomValidity('两次密码输入不一致');
+                } else {
+                    this.setCustomValidity('');
+                }
+            });
+
+            // ============ 答疑聊天逻辑 ============
+            var chatMessages = document.getElementById('chat-messages');
+            var welcomeEmpty = document.getElementById('welcome-empty');
+            var chatForm = document.getElementById('chat-form');
+            var questionInput = document.getElementById('question-input');
+            var sendBtn = document.getElementById('send-btn');
+            var historyList = document.getElementById('history-list');
+
+            function initWelcomeChat() {
+                chatMessages.innerHTML = '';
+                welcomeEmpty = document.createElement('div');
+                welcomeEmpty.className = 'welcome-empty';
+                welcomeEmpty.innerHTML = '<div class="welcome-icon">🎉</div><h3>欢迎回来！</h3><p>选择下方快捷提问，或直接输入你的问题</p>';
+                chatMessages.appendChild(welcomeEmpty);
+                addAiMessage('你好！我是你的AI助教小助手 🤖\n\n我可以帮你解答编程、计算机科学、数学、英语等各个学科的问题。请直接输入你的疑问，我会尽力为你解答！');
+            }
+
+            function addUserMessage(text) {
+                var welcome = chatMessages.querySelector('.welcome-empty');
+                if (welcome) welcome.remove();
+
+                var div = document.createElement('div');
+                div.className = 'message user';
+                div.innerHTML = '<div class="msg-avatar">👤</div><div class="msg-content">' + escapeHtml(text) + '</div>';
+                chatMessages.appendChild(div);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function addAiMessage(text) {
+                var div = document.createElement('div');
+                div.className = 'message ai';
+                div.innerHTML = '<div class="msg-avatar">🤖</div><div class="msg-content">' + escapeHtml(text) + '</div>';
+                chatMessages.appendChild(div);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function showTyping() {
+                var div = document.createElement('div');
+                div.className = 'message ai';
+                div.id = 'typing-msg';
+                div.innerHTML = '<div class="msg-avatar">🤖</div><div class="msg-content"><div class="typing-indicator"><span></span><span></span><span></span></div></div>';
+                chatMessages.appendChild(div);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function removeTyping() {
+                var typing = document.getElementById('typing-msg');
+                if (typing) typing.remove();
+            }
+
+            function escapeHtml(text) {
+                var div = document.createElement('div');
+                div.appendChild(document.createTextNode(text));
+                return div.innerHTML;
+            }
+
+            var aiResponses = [
+                '好问题！让我来详细解释一下：\n\n这是一个非常常见的技术概念，核心要点包括：\n1. 基本定义和原理\n2. 常见应用场景\n3. 注意事项\n\n建议你可以通过实践来加深理解，遇到具体问题可以继续问我。',
+                '收到你的问题！我来帮你梳理一下思路：\n\n首先我们需要明确问题的核心，然后分步骤来解决。如果你能提供更多的上下文信息，我可以给出更精准的建议。',
+                '这是个好问题！简单来说：\n\n• 核心思想是...\n• 主要优势在于...\n• 常见的坑有...\n\n建议参考相关文档进行深入学习，有任何不明白的地方随时问我！',
+                '让我为你详细解答：\n\n这个话题涉及到几个重要的知识点，我会分点说明。如果你在学习中遇到了具体的代码或概念问题，可以直接贴出来，我们一起分析。',
+                '很棒的问题！以下是我的建议：\n\n1. 先理解基础概念\n2. 多看优秀代码示例\n3. 动手实践，边做边学\n4. 遇到问题及时查阅资料\n\n保持好奇心，坚持学习，你一定会进步的！💪'
+            ];
+
+            function generateAiResponse(question) {
+                var responses = [
+                    '关于"' + question + '"这个问题，我来为你解答：\n\n这是一个很有价值的问题。在学习过程中遇到类似疑问是正常的。我的建议是从以下几个方面入手：\n\n1. 理解基础概念\n2. 多做实践练习\n3. 参考权威文档\n\n如果需要更详细的解释，欢迎继续追问！',
+                    '你好！关于"' + question + '"，我的理解是这样的：\n\n• 这是一个重要的知识点\n• 需要结合理论和实践来掌握\n• 建议多做相关练习来巩固\n\n希望对你有帮助，有其他问题随时问我！',
+                    '好的，让我来回答你关于"' + question + '"的问题：\n\n这个话题涵盖了多个方面，建议你系统地学习相关知识。如果有具体的代码问题或概念不清楚的地方，可以具体描述一下，我会针对性地解答。'
+                ];
+                return responses[Math.floor(Math.random() * responses.length)];
+            }
+
+            function handleQuestion(question) {
+                if (!question || !question.trim()) return;
+                question = question.trim();
+
+                addUserMessage(question);
+                sendBtn.disabled = true;
+                questionInput.disabled = true;
+                showTyping();
+
+                setTimeout(function () {
+                    removeTyping();
+                    addAiMessage(generateAiResponse(question));
+                    sendBtn.disabled = false;
+                    questionInput.disabled = false;
+                    questionInput.value = '';
+                    questionInput.style.height = 'auto';
+
+                    updateHistory(question);
+                }, 1200 + Math.random() * 800);
+            }
+
+            chatForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                handleQuestion(questionInput.value);
+            });
+
+            questionInput.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    chatForm.requestSubmit();
+                }
+            });
+
+            questionInput.addEventListener('input', function () {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 180) + 'px';
+            });
+
+            document.querySelectorAll('.quick-tag').forEach(function (tag) {
+                tag.addEventListener('click', function () {
+                    handleQuestion(this.getAttribute('data-q'));
+                });
+            });
+
+            function updateHistory(question) {
+                var items = historyList.querySelectorAll('.history-item');
+                var exists = false;
+                items.forEach(function (item) {
+                    if (item.getAttribute('data-q') === question) {
+                        exists = true;
+                        historyList.insertBefore(item, historyList.firstChild);
+                        var time = item.querySelector('.q-time');
+                        if (time) time.textContent = '刚刚';
+                    }
+                });
+
+                if (!exists) {
+                    var newItem = document.createElement('div');
+                    newItem.className = 'history-item';
+                    newItem.setAttribute('data-q', question);
+                    newItem.innerHTML = '<div class="q-title">' + escapeHtml(question) + '</div><div class="q-time">刚刚</div>';
+                    historyList.insertBefore(newItem, historyList.firstChild);
+
+                    if (historyList.children.length > 10) {
+                        historyList.removeChild(historyList.lastChild);
+                    }
+                }
+
+                var total = parseInt(document.getElementById('stat-total').textContent) || 0;
+                document.getElementById('stat-total').textContent = total + 1;
+                var week = parseInt(document.getElementById('stat-week').textContent) || 0;
+                document.getElementById('stat-week').textContent = week + 1;
+            }
+
+            historyList.addEventListener('click', function (e) {
+                var item = e.target.closest('.history-item');
+                if (item) {
+                    var q = item.getAttribute('data-q');
+                    if (q) {
+                        questionInput.value = q;
+                        handleQuestion(q);
+                    }
+                }
+            });
+
+            // 页面加载时检查登录状态
+            if (isLoggedIn()) {
+                showDashboard();
+                initWelcomeChat();
+            }
+        })();
+    </script>
+</body>
+</html>
